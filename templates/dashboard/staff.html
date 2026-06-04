@@ -1,0 +1,204 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Guide Dashboard{% endblock %}
+{% block page_header %}Guide Dashboard{% endblock %}
+
+{% block content %}
+<!-- Premium Hero Section -->
+<div class="saas-card mb-5 position-relative overflow-hidden p-5 text-white" style="background: linear-gradient(135deg, #0f172a 0%, #1e40af 100%); border: none;">
+    <div style="position: absolute; top: -50px; right: -50px; width: 300px; height: 300px; background: rgba(255, 255, 255, 0.05); border-radius: 50%; filter: blur(40px);"></div>
+    <div style="position: absolute; bottom: -50px; left: -50px; width: 200px; height: 200px; background: rgba(59, 130, 246, 0.2); border-radius: 50%; filter: blur(30px);"></div>
+    
+    <div class="position-relative z-1">
+        <h3 class="fw-bold mb-2">Welcome Back, {{ current_user.full_name }}</h3>
+        <p class="text-white text-opacity-75 mb-0" style="font-size: 1.1rem; max-width: 600px;">Manage your assigned treks, monitor participant limits, and update your trek statuses seamlessly.</p>
+    </div>
+</div>
+
+<!-- Modern Analytics Cards -->
+<div class="row g-4 mb-5">
+    <div class="col-md-3 col-sm-6">
+        <div class="saas-card h-100 p-4 bg-white border-0 shadow-sm d-flex align-items-center gap-3">
+            <div class="bg-primary bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-map-fill text-primary fs-4"></i>
+            </div>
+            <div>
+                <div class="small text-muted fw-medium text-uppercase mb-1" style="letter-spacing: 0.05em;">Assigned Treks</div>
+                <div class="fs-3 fw-bold text-dark lh-1">{{ stats.total_assigned }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="saas-card h-100 p-4 bg-white border-0 shadow-sm d-flex align-items-center gap-3">
+            <div class="bg-success bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-people-fill text-success fs-4"></i>
+            </div>
+            <div>
+                <div class="small text-muted fw-medium text-uppercase mb-1" style="letter-spacing: 0.05em;">Total Participants</div>
+                <div class="fs-3 fw-bold text-dark lh-1">{{ stats.total_participants }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="saas-card h-100 p-4 bg-white border-0 shadow-sm d-flex align-items-center gap-3">
+            <div class="bg-warning bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-play-fill text-warning fs-4"></i>
+            </div>
+            <div>
+                <div class="small text-muted fw-medium text-uppercase mb-1" style="letter-spacing: 0.05em;">Active Treks</div>
+                <div class="fs-3 fw-bold text-dark lh-1">{{ stats.active_treks }}</div>
+            </div>
+        </div>
+    </div>
+    <div class="col-md-3 col-sm-6">
+        <div class="saas-card h-100 p-4 bg-white border-0 shadow-sm d-flex align-items-center gap-3">
+            <div class="bg-info bg-opacity-10 rounded-circle d-flex align-items-center justify-content-center" style="width: 50px; height: 50px;">
+                <i class="bi bi-check-circle-fill text-info fs-4"></i>
+            </div>
+            <div>
+                <div class="small text-muted fw-medium text-uppercase mb-1" style="letter-spacing: 0.05em;">Completed</div>
+                <div class="fs-3 fw-bold text-dark lh-1">{{ stats.completed_treks }}</div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Search & Filter Bar -->
+<div class="saas-card mb-4 filter-bar bg-white">
+    <form method="GET" action="{{ url_for('dashboard.staff_dashboard') }}" class="row g-2 align-items-center p-2 m-0">
+        <div class="col-md-4">
+            <div class="position-relative">
+                <i class="bi bi-search position-absolute top-50 translate-middle-y ms-3 text-muted"></i>
+                <input type="text" name="search" class="form-control form-modern border-0 ps-5" placeholder="Search treks..." value="{{ request.args.get('search', '') }}">
+            </div>
+        </div>
+        <div class="col-md-3 border-start border-light ps-3">
+            <select name="difficulty" class="form-select form-modern border-0 px-2">
+                <option value="">Any Difficulty</option>
+                <option value="Easy" {% if request.args.get('difficulty', '').lower() == 'easy' %}selected{% endif %}>Easy</option>
+                <option value="Moderate" {% if request.args.get('difficulty', '').lower() == 'moderate' %}selected{% endif %}>Moderate</option>
+                <option value="Hard" {% if request.args.get('difficulty', '').lower() == 'hard' %}selected{% endif %}>Hard</option>
+            </select>
+        </div>
+        <div class="col-md-3 border-start border-light ps-3">
+            <select name="status" class="form-select form-modern border-0 px-2">
+                <option value="">Any Status</option>
+                <option value="Pending" {% if request.args.get('status', '').lower() == 'pending' %}selected{% endif %}>Pending</option>
+                <option value="Open" {% if request.args.get('status', '').lower() == 'open' %}selected{% endif %}>Open</option>
+                <option value="Closed" {% if request.args.get('status', '').lower() == 'closed' %}selected{% endif %}>Closed</option>
+                <option value="Completed" {% if request.args.get('status', '').lower() == 'completed' %}selected{% endif %}>Completed</option>
+            </select>
+        </div>
+        <div class="col-md-2 d-flex gap-2 pe-3">
+            <button type="submit" class="btn btn-dark flex-grow-1 fw-medium py-2" style="border-radius: 8px;">Filter</button>
+            <a href="{{ url_for('dashboard.staff_dashboard') }}" class="btn btn-light py-2 px-3 text-nowrap" style="border-radius: 8px;" title="Clear Filters">
+                <i class="bi bi-x-lg"></i>
+            </a>
+        </div>
+    </form>
+</div>
+
+<!-- Assigned Treks Section -->
+<div class="saas-card bg-white">
+    <div class="px-4 py-3 border-bottom border-light">
+        <h6 class="m-0 fw-bold fs-5">Assigned Treks</h6>
+    </div>
+    <div class="table-responsive">
+        <table class="table-modern align-middle">
+            <thead>
+                <tr>
+                    <th>Trek Details</th>
+                    <th>Status & Slots</th>
+                    <th>Participants</th>
+                    <th class="text-end">Management</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if assigned_treks %}
+                    {% for trek in assigned_treks %}
+                    <tr>
+                        <td>
+                            <div class="fw-bold text-dark">{{ trek.trek_name }}</div>
+                            <div class="text-muted small"><i class="bi bi-geo-alt me-1"></i>{{ trek.location }}</div>
+                            <div class="text-muted small mt-1"><i class="bi bi-calendar me-1"></i>{{ trek.start_date.strftime('%b %d') }} - {{ trek.end_date.strftime('%b %d, %Y') }}</div>
+                        </td>
+                        <td>
+                            <div class="mb-2">
+                                {% if trek.status == 'Open' %}
+                                    <span class="badge-modern badge-status-open">Open</span>
+                                {% elif trek.status == 'Completed' %}
+                                    <span class="badge-modern badge-status-completed">Completed</span>
+                                {% elif trek.status == 'Closed' %}
+                                    <span class="badge-modern badge-status-closed">Closed</span>
+                                {% else %}
+                                    <span class="badge-modern badge-neutral-modern">{{ trek.status }}</span>
+                                {% endif %}
+                            </div>
+                            <div class="small text-muted fw-medium">Slots Rem: <span class="text-dark">{{ trek.available_slots }}</span></div>
+                        </td>
+                        <td>
+                            <div class="d-flex align-items-center gap-2">
+                                <div class="bg-light rounded px-2 py-1 border d-inline-flex align-items-center">
+                                    <i class="bi bi-people-fill text-secondary me-2"></i>
+                                    <span class="fw-bold">{{ trek.bookings|selectattr('status', 'equalto', 'Booked')|list|length }}</span>
+                                </div>
+                                <a href="{{ url_for('dashboard.staff_trek_participants', id=trek.id) }}" class="btn btn-sm btn-link text-primary p-0 text-decoration-none" style="font-size: 0.85rem;">View List</a>
+                            </div>
+                        </td>
+                        <td class="text-end">
+                            <button class="btn btn-sm btn-outline-dark fw-medium px-3" data-bs-toggle="modal" data-bs-target="#updateTrekModal{{ trek.id }}" style="border-radius: 6px;">Manage Trek</button>
+                        </td>
+                    </tr>
+                    
+                    <!-- Update Trek Modal -->
+                    <div class="modal fade" id="updateTrekModal{{ trek.id }}" tabindex="-1" aria-hidden="true">
+                      <div class="modal-dialog modal-dialog-centered">
+                        <div class="modal-content border-0 shadow" style="border-radius: 12px;">
+                          <div class="modal-header border-bottom-0 pb-0">
+                            <h5 class="modal-title fw-bold">Manage: {{ trek.trek_name }}</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                          </div>
+                          <form action="{{ url_for('dashboard.staff_update_trek', id=trek.id) }}" method="POST">
+                              <div class="modal-body pt-3">
+                                  <div class="mb-3">
+                                      <label class="form-label fw-medium small">Trek Status</label>
+                                      <select class="form-select form-modern" name="status">
+                                          <option value="Pending" {% if trek.status == 'Pending' %}selected{% endif %}>Pending</option>
+                                          <option value="Open" {% if trek.status == 'Open' %}selected{% endif %}>Open</option>
+                                          <option value="Closed" {% if trek.status == 'Closed' %}selected{% endif %}>Closed</option>
+                                          <option value="Completed" {% if trek.status == 'Completed' %}selected{% endif %}>Completed</option>
+                                      </select>
+                                      <div class="form-text small">Update status when trek starts (Closed) or finishes (Completed).</div>
+                                  </div>
+                                  <div class="mb-3">
+                                      <label class="form-label fw-medium small">Available Slots</label>
+                                      <input type="number" class="form-control form-modern" name="available_slots" value="{{ trek.available_slots }}" min="0">
+                                      <div class="form-text small">Adjust if extra capacity opens up or manual changes are needed.</div>
+                                  </div>
+                              </div>
+                              <div class="modal-footer border-top-0 pt-0">
+                                  <button type="button" class="btn btn-light fw-medium" data-bs-dismiss="modal">Cancel</button>
+                                  <button type="submit" class="btn btn-primary fw-medium">Save Changes</button>
+                              </div>
+                          </form>
+                        </div>
+                      </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="4" class="text-center py-5">
+                            <div class="empty-state-premium">
+                                <i class="bi bi-funnel-fill text-muted opacity-25" style="font-size: 2.5rem;"></i>
+                                <h6 class="mt-3 fw-medium">No treks match your current filters</h6>
+                                <p class="text-muted mb-3 small">You might not have any assigned treks matching these criteria.</p>
+                                <a href="{{ url_for('dashboard.staff_dashboard') }}" class="btn btn-sm btn-outline-dark fw-medium px-4" style="border-radius: 8px;">Clear Filters</a>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

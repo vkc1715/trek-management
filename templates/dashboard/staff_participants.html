@@ -1,0 +1,68 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}Trek Participants{% endblock %}
+{% block page_header %}Participant Roster{% endblock %}
+
+{% block content %}
+<div class="mb-4">
+    <a href="{{ url_for('dashboard.staff_dashboard') }}" class="text-decoration-none text-muted fw-medium d-inline-flex align-items-center mb-2">
+        <i class="bi bi-arrow-left me-1"></i> Back to Workspace
+    </a>
+    <h4 class="fw-bold mb-1">{{ trek.trek_name }}</h4>
+    <p class="text-muted m-0" style="font-size: 0.9rem;">{{ trek.start_date.strftime('%B %d, %Y') }} &mdash; {{ trek.location }}</p>
+</div>
+
+<div class="row g-4 mb-4">
+    <div class="col-md-3">
+        <div class="saas-card p-3 bg-white text-center">
+            <h6 class="text-muted small fw-bold text-uppercase mb-1">Booked</h6>
+            <div class="fs-3 fw-bold text-primary">{{ bookings|length }}</div>
+        </div>
+    </div>
+    <div class="col-md-3">
+        <div class="saas-card p-3 bg-white text-center">
+            <h6 class="text-muted small fw-bold text-uppercase mb-1">Slots Remaining</h6>
+            <div class="fs-3 fw-bold text-dark">{{ trek.available_slots }}</div>
+        </div>
+    </div>
+</div>
+
+<div class="saas-card bg-white">
+    <div class="px-4 py-3 border-bottom border-light">
+        <h6 class="m-0 fw-bold fs-5">Trekkers Manifest</h6>
+    </div>
+    
+    <div class="table-responsive">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th>Ref #</th>
+                    <th>Name</th>
+                    <th>Email</th>
+                    <th>Phone</th>
+                    <th>Booked On</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td class="text-muted font-monospace small">#{{ '%06d' % booking.id }}</td>
+                        <td class="fw-bold text-dark">{{ booking.user.full_name }}</td>
+                        <td class="text-muted">{{ booking.user.email }}</td>
+                        <td class="text-muted">{{ booking.user.phone }}</td>
+                        <td class="text-muted small">{{ booking.booking_date.strftime('%b %d, %Y') }}</td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <p class="text-muted mb-0">No participants have booked this trek yet.</p>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

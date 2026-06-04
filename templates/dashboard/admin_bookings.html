@@ -1,0 +1,59 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}All Bookings - Admin{% endblock %}
+{% block page_header %}All Bookings{% endblock %}
+
+{% block content %}
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <div>
+        <h4 class="fw-bold mb-1">Booking Master List</h4>
+        <p class="text-muted m-0" style="font-size: 0.9rem;">View and manage all system bookings.</p>
+    </div>
+</div>
+
+<div class="saas-card bg-white">
+    <div class="table-responsive">
+        <table class="table-modern">
+            <thead>
+                <tr>
+                    <th class="sortable-header">Booking ID <i class="bi bi-arrow-down-up ms-1"></i></th>
+                    <th class="sortable-header">User <i class="bi bi-arrow-down-up ms-1"></i></th>
+                    <th class="sortable-header">Trek <i class="bi bi-arrow-down-up ms-1"></i></th>
+                    <th class="sortable-header">Date <i class="bi bi-arrow-down-up ms-1"></i></th>
+                    <th>Status</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% if bookings %}
+                    {% for booking in bookings %}
+                    <tr>
+                        <td class="text-muted font-monospace small">#{{ '%06d' % booking.id }}</td>
+                        <td class="fw-medium text-dark">{{ booking.user.full_name }}</td>
+                        <td class="fw-medium text-dark">{{ booking.trek.trek_name if booking.trek else 'Unknown Trek' }}</td>
+                        <td class="text-muted">{{ booking.booking_date.strftime('%b %d, %Y') }}</td>
+                        <td>
+                            {% if booking.status == 'Booked' %}
+                                <span class="badge-modern badge-success-modern">Booked</span>
+                            {% elif booking.status == 'Cancelled' %}
+                                <span class="badge-modern badge-status-closed">Cancelled</span>
+                            {% else %}
+                                <span class="badge-modern badge-neutral-modern">{{ booking.status }}</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                {% else %}
+                    <tr>
+                        <td colspan="5" class="text-center py-5">
+                            <div class="empty-state-premium">
+                                <i class="bi bi-ticket-detailed text-muted opacity-25" style="font-size: 3rem;"></i>
+                                <h6 class="mt-3 fw-semibold">No bookings found</h6>
+                            </div>
+                        </td>
+                    </tr>
+                {% endif %}
+            </tbody>
+        </table>
+    </div>
+</div>
+{% endblock %}

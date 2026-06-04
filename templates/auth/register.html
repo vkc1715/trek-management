@@ -1,0 +1,87 @@
+{% extends 'base.html' %}
+
+{% block title %}Create Account - TrailSync{% endblock %}
+
+{% block navbar %}{% endblock %}
+{% block flash_messages %}{% endblock %}
+
+{% block content %}
+<div class="auth-split-layout">
+    
+    <!-- Left Side: Hero / Branding -->
+    <div class="auth-left">
+        <div class="auth-left-content">
+            <a href="{{ url_for('main.index') }}" class="text-white text-decoration-none d-inline-flex align-items-center gap-2 mb-5 pb-3">
+                <i class="bi bi-layers-fill fs-3 text-primary"></i>
+                <span class="fs-4 fw-bold" style="letter-spacing: -0.03em;">TrailSync</span>
+            </a>
+            
+            <h1 class="auth-left-title">Start your journey today.</h1>
+            <p class="auth-left-subtitle">Create a free account to book world-class treks, manage your schedule, and explore the wild.</p>
+        </div>
+    </div>
+    
+    <!-- Right Side: Form -->
+    <div class="auth-right">
+        <!-- Minimal Top Nav -->
+        <div class="auth-top-nav">
+            <span class="text-muted" style="font-size: 0.9rem; font-weight: 500;">Already have an account?</span>
+            <a href="{{ url_for('auth.login') }}" class="btn btn-outline-dark btn-sm ms-3 px-3 fw-semibold" style="border-radius: 6px;">Sign in</a>
+        </div>
+
+        <!-- Flash Messages specific to auth -->
+        <div class="auth-flash-container">
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }} alert-dismissible fade show saas-card border-0 mb-3 shadow-sm py-2 px-3" role="alert" style="font-size: 0.9rem;">
+                            {{ message }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close" style="padding: 0.8rem;"></button>
+                        </div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+        </div>
+
+        <div class="auth-form-container">
+            <div class="mb-4 pb-1">
+                <h2 class="fw-bold mb-1 fs-3">Create account</h2>
+                <p class="text-muted m-0" style="font-size: 0.95rem;">Enter your details to get started.</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('auth.register') }}" id="registerForm" novalidate>
+                <div class="row g-3 mb-3">
+                    <div class="col-md-6 position-relative">
+                        <label for="full_name" class="form-label-modern d-block">Full Name</label>
+                        <input type="text" class="form-control form-modern" id="full_name" name="full_name" placeholder="John Doe" required minlength="3" maxlength="40" pattern="^[A-Za-z\s]+$" title="Name must be 3-40 letters and spaces only.">
+                    </div>
+                    <div class="col-md-6 position-relative">
+                        <label for="phone" class="form-label-modern d-block">Phone Number</label>
+                        <input type="text" class="form-control form-modern" id="phone" name="phone" placeholder="9876543210" required pattern="^\d{10}$" title="Phone number must be exactly 10 digits.">
+                    </div>
+                </div>
+                
+                <div class="mb-3 position-relative">
+                    <label for="email" class="form-label-modern d-block">Email address</label>
+                    <input type="email" class="form-control form-modern" id="email" name="email" placeholder="name@example.com" required maxlength="120">
+                </div>
+                
+                <div class="mb-3 position-relative">
+                    <label for="password" class="form-label-modern d-block">Password</label>
+                    <input type="password" class="form-control form-modern" id="password" name="password" placeholder="Create a strong password" required minlength="8" maxlength="30" pattern="^(?=.*[a-z])(?=.*[A-Z])(?=.*\d).{8,30}$" title="Password must be 8-30 chars, with uppercase, lowercase, and a number.">
+                </div>
+
+
+                
+                <button type="submit" class="btn btn-brand w-100 mt-2 py-2 fs-6" disabled>Create account</button>
+                
+                <p class="text-center text-muted mt-3 mb-0" style="font-size: 0.8rem;">
+                    By creating an account, you agree to our <a href="#" class="text-dark fw-semibold text-decoration-none">Terms</a> and <a href="#" class="text-dark fw-semibold text-decoration-none">Privacy Policy</a>.
+                </p>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/validation.js') }}"></script>
+{% endblock %}

@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}404 Not Found - TrailSync{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="text-center px-4">
+        <h1 class="display-1 fw-bold text-dark mb-0" style="letter-spacing: -0.05em; font-size: 8rem;">404</h1>
+        <div class="fs-4 text-muted mb-4 fw-medium">Lost in the wilderness</div>
+        <p class="text-muted mb-5 max-w-md mx-auto" style="max-width: 450px;">
+            The page you are looking for might have been removed, had its name changed, or is temporarily unavailable.
+        </p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-brand px-5 py-3 fw-bold" style="border-radius: 8px;">Back to Basecamp</a>
+    </div>
+</div>
+{% endblock %}

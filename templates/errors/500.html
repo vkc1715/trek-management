@@ -1,0 +1,16 @@
+{% extends 'base.html' %}
+
+{% block title %}500 Error - TrailSync{% endblock %}
+
+{% block content %}
+<div class="d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+    <div class="text-center px-4">
+        <h1 class="display-1 fw-bold text-dark mb-0" style="letter-spacing: -0.05em; font-size: 8rem;">500</h1>
+        <div class="fs-4 text-muted mb-4 fw-medium">Internal Server Error</div>
+        <p class="text-muted mb-5 max-w-md mx-auto" style="max-width: 450px;">
+            Oops! Something went wrong on our end. We are actively trying to resolve the issue. Please try again later.
+        </p>
+        <a href="{{ url_for('main.index') }}" class="btn btn-outline-dark px-5 py-3 fw-bold" style="border-radius: 8px;">Return to Home</a>
+    </div>
+</div>
+{% endblock %}

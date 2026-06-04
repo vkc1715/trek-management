@@ -1,0 +1,40 @@
+{% extends 'dashboard_base.html' %}
+
+{% block title %}My Profile{% endblock %}
+{% block page_header %}My Profile{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="saas-card p-5 bg-white">
+            <div class="text-center mb-4">
+                <div class="rounded-circle bg-primary text-white d-inline-flex align-items-center justify-content-center fw-bold mb-3" style="width: 80px; height: 80px; font-size: 2rem;">
+                    {{ current_user.full_name[0] | upper }}
+                </div>
+                <h5 class="fw-bold mb-0">{{ current_user.full_name }}</h5>
+                <p class="text-muted small">{{ current_user.email }}</p>
+            </div>
+            
+            <form method="POST" action="{{ url_for('dashboard.user_profile') }}">
+                <div class="mb-3">
+                    <label class="form-label-modern">Full Name</label>
+                    <input type="text" name="full_name" class="form-control form-modern" value="{{ current_user.full_name }}" required minlength="3" maxlength="40" pattern="^[A-Za-z\s]+$" title="Name must be 3-40 letters and spaces only.">
+                </div>
+                <div class="mb-3">
+                    <label class="form-label-modern">Email Address</label>
+                    <input type="email" class="form-control form-modern text-muted" value="{{ current_user.email }}" disabled>
+                    <div class="form-text small">Email cannot be changed.</div>
+                </div>
+                <div class="mb-4">
+                    <label class="form-label-modern">Phone Number</label>
+                    <input type="text" name="phone" class="form-control form-modern" value="{{ current_user.phone or '' }}" required pattern="^\d{10}$" title="Phone number must be exactly 10 digits.">
+                </div>
+                
+                <div class="d-grid">
+                    <button type="submit" class="btn btn-brand">Save Changes</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

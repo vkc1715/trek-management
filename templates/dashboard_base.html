@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Dashboard{% endblock %} - TrailSync</title>
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Icons -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+    <!-- Custom TrailSync CSS -->
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+    <div class="app-layout">
+        <!-- Modern Sidebar -->
+        <aside class="app-sidebar">
+            <a href="{{ url_for('main.index') }}" class="sidebar-logo">
+                <i class="bi bi-layers-fill text-primary"></i> TrailSync
+            </a>
+            
+            <nav class="sidebar-nav">
+                <div class="mb-4">
+                    <div class="text-uppercase fw-bold text-light mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.05em;">Overview</div>
+                    
+                    {% if current_user.role == 'admin' %}
+                        <a href="{{ url_for('dashboard.admin_dashboard') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.admin_dashboard' %}active{% endif %}">
+                            <i class="bi bi-grid-1x2-fill"></i> Dashboard
+                        </a>
+                        <a href="{{ url_for('dashboard.admin_treks') }}" class="nav-item-custom {% if request.endpoint and 'admin_trek' in request.endpoint %}active{% endif %}">
+                            <i class="bi bi-map-fill"></i> Treks
+                        </a>
+                        <a href="{{ url_for('dashboard.admin_users') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.admin_users' %}active{% endif %}">
+                            <i class="bi bi-people-fill"></i> Users
+                        </a>
+                        <a href="{{ url_for('dashboard.admin_staff_applications') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.admin_staff_applications' %}active{% endif %}">
+                            <i class="bi bi-person-badge-fill"></i> Trek Staff
+                        </a>
+                        <a href="{{ url_for('dashboard.admin_bookings') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.admin_bookings' %}active{% endif %}">
+                            <i class="bi bi-ticket-detailed-fill"></i> Bookings
+                        </a>
+                    {% elif current_user.role == 'staff' %}
+                        <a href="{{ url_for('dashboard.staff_dashboard') }}" class="nav-item-custom active">
+                            <i class="bi bi-layout-text-window-reverse"></i> Workspace
+                        </a>
+                        <a href="{{ url_for('dashboard.staff_dashboard') }}" class="nav-item-custom">
+                            <i class="bi bi-map"></i> Assignments
+                        </a>
+                    {% else %}
+                        <a href="{{ url_for('dashboard.user_dashboard') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.user_dashboard' %}active{% endif %}">
+                            <i class="bi bi-house-door"></i> Home
+                        </a>
+                        <a href="{{ url_for('main.explore') }}" class="nav-item-custom">
+                            <i class="bi bi-compass"></i> Discover
+                        </a>
+                        <a href="{{ url_for('dashboard.user_dashboard') }}" class="nav-item-custom">
+                            <i class="bi bi-ticket-detailed"></i> My Bookings
+                        </a>
+                    {% endif %}
+                </div>
+                
+                {% if current_user.role == 'user' %}
+                <div>
+                    <div class="text-uppercase fw-bold text-light mb-2 px-3" style="font-size: 0.7rem; letter-spacing: 0.05em;">Settings</div>
+                    <a href="{{ url_for('dashboard.user_profile') }}" class="nav-item-custom {% if request.endpoint == 'dashboard.user_profile' %}active{% endif %}">
+                        <i class="bi bi-person"></i> My Profile
+                    </a>
+                </div>
+                {% endif %}
+            </nav>
+            
+            <div class="p-3 border-top border-light">
+                <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-circle bg-light d-flex align-items-center justify-content-center text-dark fw-bold" style="width: 40px; height: 40px;">
+                        {{ current_user.full_name[0] | upper }}
+                    </div>
+                    <div style="flex: 1; overflow: hidden;">
+                        <div class="fw-semibold text-truncate" style="font-size: 0.9rem;">{{ current_user.full_name }}</div>
+                        <div class="text-muted text-truncate" style="font-size: 0.8rem;">{{ current_user.email }}</div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content Wrapper -->
+        <div class="app-main">
+            <!-- Sleek Topbar -->
+            <header class="app-header">
+                <div>
+                    <h5 class="m-0 fw-semibold text-dark">{% block page_header %}Dashboard{% endblock %}</h5>
+                </div>
+                <div class="d-flex align-items-center gap-3">
+                    <a href="#" class="text-muted"><i class="bi bi-bell fs-5"></i></a>
+                    <a href="{{ url_for('auth.logout') }}" class="btn btn-sm btn-outline-dark" style="border-radius: 6px;">Sign out</a>
+                </div>
+            </header>
+
+            <!-- Flash Messages (Premium Toast Style) -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    <div aria-live="polite" aria-atomic="true" class="position-fixed top-0 end-0 p-3" style="z-index: 1050; padding-top: 5rem !important;">
+                        {% for category, message in messages %}
+                            <div class="toast show align-items-center text-bg-{{ category }} border-0 shadow mb-2" role="alert" aria-live="assertive" aria-atomic="true" style="border-radius: 8px;">
+                                <div class="d-flex">
+                                    <div class="toast-body fw-medium">
+                                        {% if category == 'success' %}<i class="bi bi-check-circle-fill me-2"></i>
+                                        {% elif category == 'danger' %}<i class="bi bi-exclamation-triangle-fill me-2"></i>
+                                        {% elif category == 'warning' %}<i class="bi bi-exclamation-circle-fill me-2"></i>
+                                        {% else %}<i class="bi bi-info-circle-fill me-2"></i>{% endif %}
+                                        {{ message }}
+                                    </div>
+                                    <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                                </div>
+                            </div>
+                        {% endfor %}
+                    </div>
+                    <script>
+                        // Auto dismiss toasts after 4 seconds
+                        setTimeout(function() {
+                            document.querySelectorAll('.toast').forEach(function(toastNode) {
+                                toastNode.classList.remove('show');
+                                setTimeout(() => toastNode.remove(), 300); // Wait for transition
+                            });
+                        }, 4000);
+                    </script>
+                {% endif %}
+            {% endwith %}
+
+            <!-- Page Content -->
+            <main class="app-content">
+                {% block content %}{% endblock %}
+            </main>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // Basic Frontend Table Sorting Logic
+        document.addEventListener('DOMContentLoaded', function() {
+            const getCellValue = (tr, idx) => tr.children[idx].innerText || tr.children[idx].textContent;
+            
+            const comparer = (idx, asc) => (a, b) => ((v1, v2) => 
+                v1 !== '' && v2 !== '' && !isNaN(v1) && !isNaN(v2) ? v1 - v2 : v1.toString().localeCompare(v2)
+                )(getCellValue(asc ? a : b, idx), getCellValue(asc ? b : a, idx));
+
+            document.querySelectorAll('.sortable-header').forEach(th => th.addEventListener('click', (() => {
+                const table = th.closest('table');
+                const tbody = table.querySelector('tbody');
+                
+                // Clear all sorts
+                table.querySelectorAll('.sortable-header').forEach(header => {
+                    if (header !== th) {
+                        header.classList.remove('asc', 'desc');
+                    }
+                });
+
+                // Toggle sort direction
+                let isAsc = !th.classList.contains('asc');
+                th.classList.toggle('asc', isAsc);
+                th.classList.toggle('desc', !isAsc);
+                
+                // Perform sort
+                Array.from(tbody.querySelectorAll('tr'))
+                    .sort(comparer(Array.from(th.parentNode.children).indexOf(th), isAsc))
+                    .forEach(tr => tbody.appendChild(tr));
+            })));
+        });
+    </script>
+</body>
+</html>
