@@ -16,7 +16,10 @@ from routes.auth import auth_bp
 from routes.dashboard import dashboard_bp
 
 def create_app(config_class=Config):
-    app = Flask(__name__)
+    app = Flask(
+    __name__,
+    template_folder="../templates",
+    static_folder="../static")
     app.config.from_object(config_class)
 
     # Ensure database and upload directories exist
