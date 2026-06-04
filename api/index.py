@@ -11,9 +11,15 @@ def create_app(config_class=Config):
     app = Flask(__name__)
     app.config.from_object(config_class)
 
-    # Ensure database and upload directories exist
-    os.makedirs(os.path.join(app.root_path, 'database'), exist_ok=True)
-    os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
+    is_vercel = os.environ.get('VERCEL') == '1'
+
+    # Local vs Deployed Behavior: 
+    # Vercel provides a serverless environment with a read-only filesystem (in /var/task/).
+    # We must not attempt to create folders or write SQLite files at runtime on Vercel.
+    # For local development, we use SQLite normally and create the required folders.
+    if not is_vercel:
+        os.makedirs(os.path.join(app.root_path, 'database'), exist_ok=True)
+        os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 
     db.init_app(app)
 
@@ -33,11 +39,22 @@ def create_app(config_class=Config):
     app.register_blueprint(dashboard_bp)
 
     with app.app_context():
-        db.create_all()
-        
-        # Initialize database with default data
-        from database.init_db import initialize_database
-        initialize_database()
+        # Do not attempt to initialize SQLite files or default data on Vercel.
+        if not is_vercel:
+            try:
+                db.create_all()
+                
+                # Initialize database with default data
+                from database.init_db import initialize_database
+                initialize_database()
+            except Exception as e:
+                # Ensure application fails gracefully with a clear error message if SQLite is unavailable.
+                print(f"CRITICAL ERROR: Failed to initialize SQLite database. Local database access is unavailable. Details: {e}")
+        else:
+            # If on Vercel and using SQLite, it will likely fail on read/write operations later, 
+            # so we log a clear message here as a warning.
+            if app.config.get('SQLALCHEMY_DATABASE_URI', '').startswith('sqlite'):
+                print("WARNING: Application is running on Vercel with SQLite. Writes will fail because Vercel filesystem is read-only. Configure a cloud database instead.")
 
     # Register error handlers
     @app.errorhandler(404)
